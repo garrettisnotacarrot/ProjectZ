@@ -1,0 +1,41 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class TargetSystem_PhysicsOverlap : MonoBehaviour
+{
+    [SerializeField] private float range;
+
+    private NpcMovement npcMovement;
+
+    private void Awake()
+    {
+        npcMovement = GetComponent<NpcMovement>();
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.white;
+        Gizmos.DrawWireSphere(this.transform.position, range);
+    }
+
+    void Update()
+    {
+        Collider2D[] colliderArray
+            = Physics2D.OverlapCircleAll(transform.position, range);
+        Debug.Log(colliderArray);
+        foreach (Collider2D collider2D in colliderArray)
+        {
+            if (collider2D.TryGetComponent<TypeHuman>(out TypeHuman typeHuman))
+            {
+                npcMovement.randMoveDisabled = true;
+                npcMovement.StopCoroutine("RandomFace");
+                npcMovement.StartCoroutine("RandomFace");
+            }
+            else
+            {
+                npcMovement.randMoveDisabled = false;
+            }
+        }
+    }
+}
