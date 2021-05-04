@@ -1,0 +1,100 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class NpcMovement : MonoBehaviour
+{
+    public float moveSpeed = 2f;
+    float moveSpeed2;
+    //public float face;
+
+    public int direction;
+    float time;
+
+    //public bool isHuman;
+    public bool isHostile;
+    //public GameObject nearestHuman;
+    public Transform target;
+    public float aggroRange;
+    public float distToTarget;
+
+    public bool randMoveDisabled;
+
+    public Rigidbody2D rb;
+    public Animator animator;
+
+    Vector2 movement;
+    Vector2 facing;
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        target = other.transform;
+    }
+
+    private void Start()
+    {
+
+
+        StartCoroutine("RandomFace");
+    }
+
+    void Update()
+    {
+        //movement.x = Input.GetAxisRaw("Horizontal");
+        //movement.y = Input.GetAxisRaw("Vertical");
+        
+        animator.SetFloat("Horizontal", movement.x);
+        animator.SetFloat("Vertical", movement.y);
+        animator.SetFloat("Speed", movement.sqrMagnitude);
+        animator.SetFloat("FacingX", facing.x);
+        animator.SetFloat("FacingY", facing.y);
+
+        distToTarget = Vector2.Distance(transform.position, target.position);
+        if (distToTarget < aggroRange)
+        {
+            //randMoveDisabled = true;
+        }
+        else
+        {
+            randMoveDisabled = false;
+        }
+
+        //nearestHuman = GameObject.FindObjectOfType<TypeHuman>().gameObject;
+    }
+
+    private void FixedUpdate()
+    {
+        rb.MovePosition(rb.position + movement.normalized * moveSpeed * Time.fixedDeltaTime);
+        
+    }
+
+    IEnumerator RandomFace()
+    {
+        if (randMoveDisabled == true)
+        {
+            yield return new WaitForSeconds(0);
+        }
+        else
+        {
+            time = Random.Range(1, 3);
+            yield return new WaitForSeconds(time);
+
+            direction = Random.Range(0, 5);
+            if (direction == 0) { movement.x = 0; movement.y = -1; }
+            if (direction == 1) { movement.x = 1; movement.y = 0; }
+            if (direction == 2) { movement.x = 0; movement.y = 1; }
+            if (direction == 3) { movement.x = -1; movement.y = 0; }
+
+            facing.x = movement.x;
+            facing.y = movement.y;
+
+            time = 1 / moveSpeed;
+            yield return new WaitForSeconds(time);
+
+            movement.x = 0; movement.y = 0;
+        }
+
+        Start();
+
+    }
+}
