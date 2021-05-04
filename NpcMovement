@@ -14,7 +14,7 @@ public class NpcMovement : MonoBehaviour
     //public bool isHuman;
     public bool isHostile;
     //public GameObject nearestHuman;
-    public Transform target;
+    //public Transform target;
     public float aggroRange;
     public float distToTarget;
 
@@ -26,15 +26,13 @@ public class NpcMovement : MonoBehaviour
     Vector2 movement;
     Vector2 facing;
 
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        target = other.transform;
-    }
-
     private void Start()
     {
+        ActivateRandomFace();
+    }
 
-
+    void ActivateRandomFace()
+    {
         StartCoroutine("RandomFace");
     }
 
@@ -49,17 +47,8 @@ public class NpcMovement : MonoBehaviour
         animator.SetFloat("FacingX", facing.x);
         animator.SetFloat("FacingY", facing.y);
 
-        distToTarget = Vector2.Distance(transform.position, target.position);
-        if (distToTarget < aggroRange)
-        {
-            //randMoveDisabled = true;
-        }
-        else
-        {
-            randMoveDisabled = false;
-        }
-
-        //nearestHuman = GameObject.FindObjectOfType<TypeHuman>().gameObject;
+        //distToTarget = Vector2.Distance(transform.position, target.position);
+        
     }
 
     private void FixedUpdate()
@@ -72,6 +61,7 @@ public class NpcMovement : MonoBehaviour
     {
         if (randMoveDisabled == true)
         {
+            Debug.Log("CHASE");
             yield return new WaitForSeconds(0);
         }
         else
@@ -93,8 +83,7 @@ public class NpcMovement : MonoBehaviour
 
             movement.x = 0; movement.y = 0;
         }
-
-        Start();
-
+        Debug.Log("Workin");
+        ActivateRandomFace();
     }
 }
