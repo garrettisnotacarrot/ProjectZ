@@ -1,0 +1,44 @@
+//Just to make the example clearer, you already know how to get this
+Vector2 enemyPos;
+Vector2 playerPos;
+
+//Gets direction to player and normalizes (so it's a unit vector)
+//You want to subtract by what you want to act as the "center", in this case the enemy
+//And so that this can be directly used in the movement code it's normalized (making the sum of the vector 1)
+//That way it wont move faster than desired and works in any direction
+Vector2 moveDirection = (playerPos - enemyPos).normalized;
+
+//Alternatively, if you also want to use the distance to the player for other logic you can rewrite it some
+//Get the difference vector and from there extract both unit-vector direction and distance
+Vector2 enemyToPlayer = playerPos - enemyPos;
+float distanceToPlayer = enemyToPlayer.magnitude; //Length of the vector = the distance
+Vector2 moveDirection = enemyToPlayer / distanceToPlayer; //This will normalize the vector like in the previous example
+//Now you can use both the distance and direction for whatever AI logic you need
+
+//Then for the animations you want to find which axis is the greatest
+float moveDirXAbs = Mathf.Abs(moveDirection.x); //Get distance from 0 on X
+float moveDirYAbs = Mathf.Abs(moveDirection.y); //Get distance from 0 on Y
+bool movesHorizontally = moveDirXAbs > moveDirYAbs; //Check which is the greatest
+
+if(movesHorizontally) //self explanatory, moving horizontally
+{
+  if(moveDirXAbs > 0) //Moving left, I think?
+  {
+    animator.Play("MoveLeft");
+  }
+  else
+  {
+    animator.Play("MoveRight");
+  }
+}
+else //else it must move vertically
+{
+  if(moveDirYAbs > 0) //Moving up
+  {
+    animator.Play("MoveUp");
+  }
+  else
+  {
+    animator.Play("MoveDown");
+  }
+}
